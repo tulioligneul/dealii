@@ -539,7 +539,7 @@ normal_vector (const typename Triangulation<dim,spacedim>::face_iterator &face,
 
   FE_Q<facedim> linear_fe(1);
 
-  const double eps = 1e-12;
+  const double eps = 1e-11;
   Tensor<1,spacedim> grad_F[facedim];
   unsigned int iteration = 0;
   while (true)
