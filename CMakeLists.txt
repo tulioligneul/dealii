@@ -99,6 +99,8 @@ VERBOSE_INCLUDE(${CMAKE_SOURCE_DIR}/cmake/setup_deal_ii.cmake)
 
 VERBOSE_INCLUDE(${CMAKE_SOURCE_DIR}/cmake/setup_compiler_flags.cmake)
 
+add_definitions(-D_WINSOCKAPI_)
+
 #
 # Include information about bundled libraries:
 #

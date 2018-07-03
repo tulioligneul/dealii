@@ -31,6 +31,8 @@
 #  include <tbb/task_scheduler_init.h>
 #endif
 
+#include <algorithm>
+
 DEAL_II_NAMESPACE_OPEN
 
 #ifdef DEAL_II_WITH_THREADS
