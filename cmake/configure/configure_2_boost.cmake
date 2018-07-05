@@ -165,7 +165,8 @@ MACRO(FEATURE_BOOST_FIND_EXTERNAL var)
       #
       # Test that Boost.Serialization is usable.
       #
-      IF(NOT DEFINED BOOST_SERIALIZATION_USABLE OR NOT ${BOOST_SERIALIZATION_USABLE})
+      
+      IF(0) #NOT DEFINED BOOST_SERIALIZATION_USABLE OR NOT ${BOOST_SERIALIZATION_USABLE})
         # Only run this check if it hasn't successfully run previously.
         MESSAGE(STATUS "Performing Test BOOST_SERIALIZATION_USABLE")
 

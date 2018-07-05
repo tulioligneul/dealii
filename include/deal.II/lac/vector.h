@@ -74,7 +74,10 @@ namespace parallel
   }
 }
 
-
+template <typename Number>
+struct MyNumberArrayDeleter {
+    void operator()(Number* b) { std::free(b); }
+};
 
 /*! @addtogroup Vectors
  *@{
@@ -933,7 +936,7 @@ protected:
    * we need to use a custom deleter for this object that does not call
    * <code>delete[]</code>, but instead calls @p free().
    */
-  std::unique_ptr<Number[], decltype(&free)> values;
+  std::unique_ptr<Number[], MyNumberArrayDeleter<Number>> values;
 
   /**
    * For parallel loops with TBB, this member variable stores the affinity
@@ -987,7 +990,7 @@ Vector<Number>::Vector ()
   :
   vec_size(0),
   max_vec_size(0),
-  values(nullptr, &free)
+  values(nullptr)
 {
   // virtual functions called in constructors and destructors never use the
   // override in a derived class
@@ -1019,7 +1022,7 @@ Vector<Number>::Vector (const size_type n)
   :
   vec_size(0),
   max_vec_size(0),
-  values(nullptr, &free)
+  values(nullptr)
 {
   // virtual functions called in constructors and destructors never use the
   // override in a derived class

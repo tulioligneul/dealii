@@ -44,7 +44,7 @@ namespace Differentiation
      *
      * @author Jean-Paul Pelteret, 2017
      */
-    template<typename ScalarType, enum NumberTypes ADNumberTypeCode, typename T = void>
+    template<typename ScalarType, NumberTypes ADNumberTypeCode, typename T = void>
     struct NumberTraits;
 
 
@@ -106,7 +106,7 @@ namespace Differentiation
        *
        * @author Jean-Paul Pelteret, 2017
        */
-      template<typename ScalarType, enum NumberTypes ADNumberTypeCode, typename = void>
+      template<typename ScalarType, NumberTypes ADNumberTypeCode, typename = void>
       struct ADNumberInfoFromEnum;
 
 
@@ -741,7 +741,7 @@ namespace Differentiation
      * @p ScalarType represents a floating or complex number that is templated
      * on a floating point type.
      */
-    template<typename ScalarType, enum NumberTypes ADNumberTypeCode>
+    template<typename ScalarType, NumberTypes ADNumberTypeCode>
     struct NumberTraits<ScalarType, ADNumberTypeCode, typename std::enable_if<
       std::is_floating_point<ScalarType>::value ||
   (boost::is_complex<ScalarType>::value &&
@@ -751,7 +751,7 @@ namespace Differentiation
       /**
        * The type of taping used
        */
-      static constexpr enum NumberTypes  type_code
+      static constexpr NumberTypes  type_code
       = ADNumberTypeCode;
 
       // The clang compiler does not seem to like these

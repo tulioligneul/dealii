@@ -205,7 +205,7 @@ namespace LinearAlgebra
       :
       partitioner (new Utilities::MPI::Partitioner()),
       allocated_size (0),
-      values (nullptr, &free)
+      values (nullptr)
     {
       reinit(0);
     }
@@ -217,7 +217,7 @@ namespace LinearAlgebra
       :
       Subscriptor(),
       allocated_size (0),
-      values (nullptr, &free),
+      values (nullptr),
       vector_is_ghosted (false)
     {
       reinit (v, true);
@@ -241,7 +241,7 @@ namespace LinearAlgebra
                             const MPI_Comm  communicator)
       :
       allocated_size (0),
-      values (nullptr, &free),
+      values (nullptr),
       vector_is_ghosted (false)
     {
       reinit (local_range, ghost_indices, communicator);
@@ -254,7 +254,7 @@ namespace LinearAlgebra
                             const MPI_Comm  communicator)
       :
       allocated_size (0),
-      values (nullptr, &free),
+      values (nullptr),
       vector_is_ghosted (false)
     {
       reinit (local_range, communicator);
@@ -266,7 +266,7 @@ namespace LinearAlgebra
     Vector<Number>::Vector (const size_type size)
       :
       allocated_size (0),
-      values (nullptr, &free),
+      values (nullptr),
       vector_is_ghosted (false)
     {
       reinit (size, false);
@@ -279,7 +279,7 @@ namespace LinearAlgebra
     Vector (const std::shared_ptr<const Utilities::MPI::Partitioner> &partitioner)
       :
       allocated_size (0),
-      values (nullptr, &free),
+      values (nullptr),
       vector_is_ghosted (false)
     {
       reinit (partitioner);

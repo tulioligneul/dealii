@@ -48,7 +48,7 @@ Vector<Number>::Vector (const Vector<Number> &v)
   Subscriptor(),
   vec_size(v.size()),
   max_vec_size(v.size()),
-  values(nullptr, &free)
+  values(nullptr)
 {
   if (vec_size != 0)
     {
@@ -82,7 +82,7 @@ Vector<Number>::Vector (const Vector<OtherNumber> &v)
   Subscriptor(),
   vec_size(v.size()),
   max_vec_size(v.size()),
-  values(nullptr, &free)
+  values(nullptr)
 {
   if (vec_size != 0)
     {

@@ -1010,8 +1010,7 @@ namespace internal
 
                 // lines
                 {
-                  constexpr std::array<unsigned int,4> line_coordinates_y
-                  ({{0, 1, 4, 5}});
+                  constexpr std::array<unsigned int,4> line_coordinates_y{0, 1, 4, 5};
                   const Point<2> py(p[0], p[2]);
                   for (unsigned int l=0; l<4; ++l)
                     lohvs(index_table, 8+line_coordinates_y[l]*M+j) =
@@ -1019,8 +1018,7 @@ namespace internal
                 }
 
                 {
-                  constexpr std::array<unsigned int,4> line_coordinates_x
-                  ({{2, 3, 6, 7}});
+                  constexpr std::array<unsigned int,4> line_coordinates_x{2, 3, 6, 7};
                   const Point<2> px(p[1], p[2]);
                   for (unsigned int l=0; l<4; ++l)
                     lohvs(index_table, 8+line_coordinates_x[l]*M+k) =
@@ -1028,8 +1026,7 @@ namespace internal
                 }
 
                 {
-                  constexpr std::array<unsigned int,4> line_coordinates_z
-                  ({{8, 9, 10, 11}});
+                  constexpr std::array<unsigned int,4> line_coordinates_z{8, 9, 10, 11};
                   const Point<2> pz(p[0], p[1]);
                   for (unsigned int l=0; l<4; ++l)
                     lohvs(index_table, 8+line_coordinates_z[l]*M+i) =
