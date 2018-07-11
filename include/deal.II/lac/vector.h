@@ -1006,7 +1006,7 @@ Vector<Number>::Vector (const InputIterator first, const InputIterator last)
   :
   vec_size (0),
   max_vec_size (0),
-  values (nullptr, &free)
+  values (nullptr)
 {
   // allocate memory. do not initialize it, as we will copy over to it in a
   // second
