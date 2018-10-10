@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------
 //
-// Copyright (C) 2009 - 2016 by the deal.II authors
+// Copyright (C) 2009 - 2018 by the deal.II authors
 //
 // This file is part of the deal.II library.
 //
@@ -13,8 +13,8 @@
 //
 // ---------------------------------------------------------------------
 
-#ifndef dealii__fe_nothing_h
-#define dealii__fe_nothing_h
+#ifndef dealii_fe_nothing_h
+#define dealii_fe_nothing_h
 
 #include <deal.II/base/config.h>
 #include <deal.II/fe/fe.h>
@@ -34,9 +34,9 @@ DEAL_II_NAMESPACE_OPEN
  * active region where normal elements are used, and an inactive region where
  * FE_Nothing elements are used.  The hp::DoFHandler will therefore assign no
  * degrees of freedom to the FE_Nothing cells, and this subregion is therefore
- * implicitly deleted from the computation. step-46 shows a use case for this
- * element. An interesting application for this element is also presented in
- * the paper A. Cangiani, J. Chapman, E. Georgoulis, M. Jensen:
+ * implicitly deleted from the computation. step-10 and step-46 show use cases
+ * for this element. An interesting application for this element is also
+ * presented in the paper A. Cangiani, J. Chapman, E. Georgoulis, M. Jensen:
  * <b>Implementation of the Continuous-Discontinuous Galerkin Finite Element
  * Method</b>, arXiv:1201.2878v1 [math.NA], 2012 (see
  * http://arxiv.org/abs/1201.2878).
@@ -96,11 +96,11 @@ public:
               const bool dominate = false);
 
   /**
-   * A sort of virtual copy constructor. Some places in the library, for
-   * example the constructors of FESystem as well as the hp::FECollection
-   * class, need to make copied of finite elements without knowing their exact
-   * type. They do so through this function.
-   */
+  * A sort of virtual copy constructor. Some places in the library, for
+  * example the constructors of FESystem as well as the hp::FECollection
+  * class, need to make copied of finite elements without knowing their exact
+  * type. They do so through this function.
+  */
   virtual
   FiniteElement<dim,spacedim> *
   clone() const;
@@ -111,12 +111,12 @@ public:
    */
   virtual
   std::string
-  get_name() const;
+  get_name() const override;
 
   // for documentation, see the FiniteElement base class
   virtual
   UpdateFlags
-  requires_update_flags (const UpdateFlags update_flags) const;
+  requires_update_flags (const UpdateFlags update_flags) const override;
 
   /**
    * Return the value of the @p ith shape function at the point @p p. @p p is
@@ -127,7 +127,7 @@ public:
    */
   virtual
   double
-  shape_value (const unsigned int i, const Point<dim> &p) const;
+  shape_value (const unsigned int i, const Point<dim> &p) const override;
 
   virtual
   void
@@ -138,7 +138,7 @@ public:
                   const typename Mapping<dim,spacedim>::InternalDataBase              &mapping_internal,
                   const dealii::internal::FEValues::MappingRelatedData<dim, spacedim> &mapping_data,
                   const typename FiniteElement<dim,spacedim>::InternalDataBase        &fe_internal,
-                  dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const;
+                  dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const override;
 
   virtual
   void
@@ -149,7 +149,7 @@ public:
                        const typename Mapping<dim,spacedim>::InternalDataBase              &mapping_internal,
                        const dealii::internal::FEValues::MappingRelatedData<dim, spacedim> &mapping_data,
                        const typename FiniteElement<dim,spacedim>::InternalDataBase        &fe_internal,
-                       dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const;
+                       dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const override;
 
   virtual
   void
@@ -161,7 +161,7 @@ public:
                           const typename Mapping<dim,spacedim>::InternalDataBase              &mapping_internal,
                           const dealii::internal::FEValues::MappingRelatedData<dim, spacedim> &mapping_data,
                           const typename FiniteElement<dim,spacedim>::InternalDataBase        &fe_internal,
-                          dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const;
+                          dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const override;
 
   /**
    * Prepare internal data structures and fill in values independent of the
@@ -177,7 +177,7 @@ public:
   get_data (const UpdateFlags                                                    update_flags,
             const Mapping<dim,spacedim>                                         &mapping,
             const Quadrature<dim>                                               &quadrature,
-            dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const;
+            dealii::internal::FEValues::FiniteElementRelatedData<dim, spacedim> &output_data) const override;
 
   /**
    * Return whether this element dominates the one given as argument when they
@@ -195,28 +195,38 @@ public:
    */
   virtual
   FiniteElementDomination::Domination
-  compare_for_face_domination (const FiniteElement<dim,spacedim> &fe_other) const;
+  compare_for_face_domination (const FiniteElement<dim,spacedim> &fe_other) const override;
 
 
 
   virtual
   std::vector<std::pair<unsigned int, unsigned int> >
-  hp_vertex_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const;
+  hp_vertex_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const override;
 
   virtual
   std::vector<std::pair<unsigned int, unsigned int> >
-  hp_line_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const;
+  hp_line_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const override;
 
   virtual
   std::vector<std::pair<unsigned int, unsigned int> >
-  hp_quad_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const;
+  hp_quad_dof_identities (const FiniteElement<dim,spacedim> &fe_other) const override;
 
   virtual
   bool
-  hp_constraints_are_implemented () const;
+  hp_constraints_are_implemented () const override;
 
   /**
-   * Return the matrix interpolating from a face of of one element to the face
+   * Return the matrix interpolating from the given finite element to the
+   * present one. Since the current finite element has no degrees of freedom, the
+   * interpolation matrix is necessarily empty.
+   */
+  virtual
+  void
+  get_interpolation_matrix (const FiniteElement<dim,spacedim> &source_fe,
+                            FullMatrix<double>       &interpolation_matrix) const override;
+
+  /**
+   * Return the matrix interpolating from a face of one element to the face
    * of the neighboring element. The size of the matrix is then
    * <tt>source.#dofs_per_face</tt> times <tt>this->#dofs_per_face</tt>.
    *
@@ -227,11 +237,11 @@ public:
   virtual
   void
   get_face_interpolation_matrix (const FiniteElement<dim,spacedim> &source_fe,
-                                 FullMatrix<double>       &interpolation_matrix) const;
+                                 FullMatrix<double>       &interpolation_matrix) const override;
 
 
   /**
-   * Return the matrix interpolating from a face of of one element to the
+   * Return the matrix interpolating from a face of one element to the
    * subface of the neighboring element. The size of the matrix is then
    * <tt>source.#dofs_per_face</tt> times <tt>this->#dofs_per_face</tt>.
    *
@@ -243,12 +253,22 @@ public:
   void
   get_subface_interpolation_matrix (const FiniteElement<dim,spacedim> &source_fe,
                                     const unsigned int index,
-                                    FullMatrix<double>  &interpolation_matrix) const;
+                                    FullMatrix<double>  &interpolation_matrix) const override;
 
   /**
    * @return true if the FE dominates any other.
    */
   bool is_dominating() const;
+
+  /**
+   * Comparison operator. In addition to the fields already checked by
+   * FiniteElement::operator==(), this operator also checks for equality
+   * of the arguments passed to the constructors of the current object
+   * as well as the object against which the comparison is done (which
+   * for this purpose obviously also needs to be of type FE_Nothing).
+   */
+  virtual
+  bool operator == (const FiniteElement<dim,spacedim> &fe) const;
 
 private:
 
@@ -265,4 +285,3 @@ private:
 DEAL_II_NAMESPACE_CLOSE
 
 #endif
-
