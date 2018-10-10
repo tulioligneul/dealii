@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------
 //
-// Copyright (C) 2009 - 2015 by the deal.II authors
+// Copyright (C) 2009 - 2018 by the deal.II authors
 //
 // This file is part of the deal.II library.
 //
@@ -14,14 +14,20 @@
 // ---------------------------------------------------------------------
 
 
-#include <deal.II/fe/fe_nothing.h>
+#include <deal.II/fe/fe_nothing.h> 
 
 DEAL_II_NAMESPACE_OPEN
 
-namespace
+namespace internal
 {
-  const char *
-  zero_dof_message = "This element has no shape functions.";
+  namespace FE_Nothing
+  {
+    namespace
+    {
+      const char *
+      zero_dof_message = "This element has no shape functions.";
+    }
+  }
 }
 
 
@@ -63,7 +69,13 @@ FE_Nothing<dim,spacedim>::get_name () const
   std::ostringstream namebuf;
   namebuf << "FE_Nothing<" << dim << ">(";
   if (this->n_components() > 1)
-    namebuf << this->n_components();
+    {
+      namebuf << this->n_components();
+      if (dominate)
+        namebuf << ", dominating";
+    }
+  else if (dominate)
+    namebuf << "dominating";
   namebuf << ")";
   return namebuf.str();
 }
@@ -84,8 +96,8 @@ double
 FE_Nothing<dim,spacedim>::shape_value (const unsigned int /*i*/,
                                        const Point<dim> & /*p*/) const
 {
-  (void)zero_dof_message;
-  Assert(false,ExcMessage(zero_dof_message));
+  (void)internal::FE_Nothing::zero_dof_message;
+  Assert(false,ExcMessage(internal::FE_Nothing::zero_dof_message));
   return 0;
 }
 
@@ -102,8 +114,9 @@ FE_Nothing<dim,spacedim>::get_data (const UpdateFlags                           
   // need to resize things to hold the appropriate numbers
   // of dofs, but in this case all data fields are empty.
   typename FiniteElement<dim,spacedim>::InternalDataBase *data
-    = new typename FiniteElement<dim,spacedim>::InternalDataBase();
+   = new typename FiniteElement<dim,spacedim>::InternalDataBase();
   return data;
+
 }
 
 
@@ -112,7 +125,7 @@ template <int dim, int spacedim>
 void
 FE_Nothing<dim,spacedim>::
 fill_fe_values (const typename Triangulation<dim,spacedim>::cell_iterator &,
-                const CellSimilarity::Similarity                                     ,
+                const CellSimilarity::Similarity,
                 const Quadrature<dim> &,
                 const Mapping<dim,spacedim> &,
                 const typename Mapping<dim,spacedim>::InternalDataBase &,
@@ -129,7 +142,7 @@ template <int dim, int spacedim>
 void
 FE_Nothing<dim,spacedim>::
 fill_fe_face_values (const typename Triangulation<dim,spacedim>::cell_iterator &,
-                     const unsigned int                                                   ,
+                     const unsigned int,
                      const Quadrature<dim-1>                                             &,
                      const Mapping<dim,spacedim> &,
                      const typename Mapping<dim,spacedim>::InternalDataBase &,
@@ -146,8 +159,8 @@ template <int dim, int spacedim>
 void
 FE_Nothing<dim,spacedim>::
 fill_fe_subface_values (const typename Triangulation<dim,spacedim>::cell_iterator &,
-                        const unsigned int                                                   ,
-                        const unsigned int                                                   ,
+                        const unsigned int,
+                        const unsigned int,
                         const Quadrature<dim-1>                                             &,
                         const Mapping<dim,spacedim> &,
                         const typename Mapping<dim,spacedim>::InternalDataBase &,
@@ -168,6 +181,29 @@ FE_Nothing<dim,spacedim>::is_dominating() const
 }
 
 
+
+template <int dim, int spacedim>
+bool
+FE_Nothing<dim,spacedim>::operator == (const FiniteElement<dim,spacedim> &f) const
+{
+  // Compare fields stored in the base class
+  if (! (this->FiniteElement<dim,spacedim>::operator== (f)))
+    return false;
+
+  // Then make sure the other object is really of type FE_Nothing,
+  // and compare the data that has been passed to both objects'
+  // constructors.
+  if (const FE_Nothing<dim,spacedim> *f_nothing
+      = dynamic_cast<const FE_Nothing<dim,spacedim> *>(&f))
+    return ((dominate == f_nothing->dominate)
+            &&
+            (this->components == f_nothing->components));
+  else
+    return false;
+}
+
+
+
 template <int dim, int spacedim>
 FiniteElementDomination::Domination
 FE_Nothing<dim,spacedim> ::
@@ -179,7 +215,7 @@ compare_for_face_domination (const FiniteElement<dim,spacedim> &fe) const
       return FiniteElementDomination::no_requirements;
     }
   // if it does and the other is FE_Nothing, either can dominate
-  else if (dynamic_cast<const FE_Nothing<dim>*>(&fe) != 0)
+  else if (dynamic_cast<const FE_Nothing<dim>*>(&fe) != nullptr)
     {
       return FiniteElementDomination::either_element_can_dominate;
     }
@@ -239,6 +275,27 @@ hp_constraints_are_implemented () const
 }
 
 
+
+template <int dim, int spacedim>
+void
+FE_Nothing<dim,spacedim>::
+get_interpolation_matrix (const FiniteElement<dim,spacedim> &/*source_fe*/,
+                          FullMatrix<double>       &interpolation_matrix) const
+{
+  // Since this element has no dofs,
+  // the interpolation matrix is necessarily empty.
+  (void)interpolation_matrix;
+
+  Assert (interpolation_matrix.m() == 0,
+          ExcDimensionMismatch (interpolation_matrix.m(),
+                                0));
+  Assert (interpolation_matrix.n() == 0,
+          ExcDimensionMismatch (interpolation_matrix.n(),
+                                0));
+}
+
+
+
 template <int dim, int spacedim>
 void
 FE_Nothing<dim,spacedim>::
@@ -284,4 +341,3 @@ get_subface_interpolation_matrix (const FiniteElement<dim,spacedim> & /*source_f
 
 
 DEAL_II_NAMESPACE_CLOSE
-
