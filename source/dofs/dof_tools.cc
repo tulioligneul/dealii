@@ -1893,11 +1893,9 @@ namespace DoFTools
         for (unsigned int fe_index = 0; fe_index < fe_collection.size(); ++fe_index)
           {
             // check whether every fe in the collection has support points
-            Assert(fe_collection[fe_index].has_support_points(),
-                   typename FiniteElement<dim>::ExcFEHasNoSupportPoints());
-            q_coll_dummy.push_back(
-              Quadrature<dim> (
-                fe_collection[fe_index].get_unit_support_points()));
+            if (fe_collection[fe_index].has_support_points()) {
+                q_coll_dummy.push_back(Quadrature<dim> (fe_collection[fe_index].get_unit_support_points()));
+            }
           }
 
         // Now loop over all cells and enquire the support points on each
